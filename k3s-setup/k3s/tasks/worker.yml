@@ -20,7 +20,8 @@
     - Reload systemd daemon
     - Restart k3s-worker
 
-# - name: Start k3s worker
-#   systemd:
-#     name: k3s-worker
-#     state: started
+- name: Start k3s worker
+  systemd:
+    name: k3s-worker
+    daemon_reload: true
+    state: started

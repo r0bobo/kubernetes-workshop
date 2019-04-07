@@ -7,10 +7,11 @@
     - Reload systemd daemon
     - Restart k3s-controller
 
-# - name: Start k3s controller
-#   systemd:
-#     name: k3s-controller
-#     state: started
+- name: Start k3s controller
+  systemd:
+    name: k3s-controller
+    daemon_reload: true
+    state: started
 
 - name: Wait for controller to create cluster token
   wait_for:
@@ -37,9 +38,13 @@
   copy:
     content: "{{ kube_config.stdout }}"
     dest: k3s_config.yml
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+  become: false
   delegate_to: 127.0.0.1
 
-# - debug:
-#     var: kube_config.stdout
+- name: Update controller host
+  replace:
+    path: k3s_config.yml
+    regexp: '(^\s*server:).*'
+    replace: '\1 {{ k3s_server_addr }}'
+  become: false
+  delegate_to: 127.0.0.1
