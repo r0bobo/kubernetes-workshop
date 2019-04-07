@@ -1,0 +1,26 @@
+---
+- name: Create /etc/k3s
+  file:
+    path: /etc/k3s
+    state: directory
+
+- name: Write cluster token to workers
+  copy:
+    content: "{{ node_token['content'] | b64decode }}"
+    dest: /etc/k3s/cluster-token
+    mode: 0400
+    owner: root
+    group: root
+
+- name: Install worker service
+  template:
+    src: k3s.service.j2
+    dest: /etc/systemd/system/k3s-worker.service
+  notify:
+    - Reload systemd daemon
+    - Restart k3s-worker
+
+# - name: Start k3s worker
+#   systemd:
+#     name: k3s-worker
+#     state: started

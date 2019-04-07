@@ -1,0 +1,19 @@
+---
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: true
+
+- name: Restart k3s-controller
+  systemd:
+    name: k3s-controller
+    state: restarted
+
+- name: Restart k3s-worker
+  systemd:
+    name: k3s-worker
+    state: restarted
+
+- name: Restart sshd
+  systemd:
+    name: sshd
+    state: restarted

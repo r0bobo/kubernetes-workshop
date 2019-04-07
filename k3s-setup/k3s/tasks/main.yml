@@ -1,0 +1,66 @@
+---
+- name: Check that there is only one controller
+  fail:
+    msg: Only deployments with one controller node are supported
+  when: groups['controller'] | length > 1
+  run_once: true
+
+- name: Install ssh key
+  authorized_key:
+    key: "{{ lookup('file', k3s_ssh_key) }}"
+    user: kube
+    state: present
+
+- name: Setup passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^%sudo'
+    line: '%sudo   ALL=(ALL:ALL) NOPASSWD:ALL'
+    state: present
+
+- name: Limit sshd password and root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - regexp: '^PermitRootLogin'
+      line: 'PermitRootLogin no'
+    - regexp: '^PasswordAuthentication'
+      line: 'PasswordAuthentication no'
+  notify:
+    - Restart sshd
+
+- name: Install chrony
+  package:
+    name: chrony
+    state: present
+
+- name: Start chrony
+  service:
+    name: chronyd
+    state: started
+
+- name: Fetch K3S checksum
+  get_url:
+    url: https://github.com/rancher/k3s/releases/download/v{{ k3s_version }}/sha256sum-arm.txt
+    dest: /tmp/k3s-checksum
+
+- name: Read K3S checksum
+  command: awk '/k3s-armhf/ { print $1 }' /tmp/k3s-checksum
+  register: k3s_checksum
+  changed_when: false
+
+- name: Download K3S
+  get_url:
+    url: https://github.com/rancher/k3s/releases/download/v{{ k3s_version }}/k3s-armhf
+    dest: /usr/local/bin/k3s
+    mode: 0755
+    checksum: sha256:{{ k3s_checksum.stdout }}
+
+- include_tasks: controller.yml
+  when: k3s_controller
+
+- include_tasks: worker.yml
+  when: not k3s_controller

@@ -1,0 +1,45 @@
+---
+- name: Install controller service
+  template:
+    src: k3s.service.j2
+    dest: /etc/systemd/system/k3s-controller.service
+  notify:
+    - Reload systemd daemon
+    - Restart k3s-controller
+
+# - name: Start k3s controller
+#   systemd:
+#     name: k3s-controller
+#     state: started
+
+- name: Wait for controller to create cluster token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    timeout: 60
+
+- name: Read node token
+  slurp:
+    path: /var/lib/rancher/k3s/server/node-token
+  run_once: true
+  register: node_token
+
+- name: Set controller addr
+  set_fact:
+    k3s_server_addr: "https://{{ ansible_fqdn }}:6443"
+  run_once: true
+
+- name: Fetch kube config
+  command: k3s kubectl config view --raw
+  register: kube_config
+  changed_when: false
+
+- name: Save kube config
+  copy:
+    content: "{{ kube_config.stdout }}"
+    dest: k3s_config.yml
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+  delegate_to: 127.0.0.1
+
+# - debug:
+#     var: kube_config.stdout

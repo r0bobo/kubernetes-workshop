@@ -1,0 +1,4 @@
+---
+k3s_ssh_key: k3s.ed25519.pub
+k3s_version: 0.3.0
+k3s_controller: false
