@@ -17,3 +17,6 @@
   systemd:
     name: sshd
     state: restarted
+
+- name: Reboot
+  reboot:

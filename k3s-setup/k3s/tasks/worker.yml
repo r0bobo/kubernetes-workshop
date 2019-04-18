@@ -24,4 +24,11 @@
   systemd:
     name: k3s-worker
     daemon_reload: true
+    enabled: true
     state: started
+  register: worker_svc
+
+- fail:
+    msg: Could not start worker
+  when: worker_svc.status.ActiveState != 'active'
+

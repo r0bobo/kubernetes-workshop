@@ -5,17 +5,26 @@
   when: groups['controller'] | length > 1
   run_once: true
 
+- name: Check if memory cgroups are enabled
+  stat:
+    path: /sys/fs/cgroup/memory
+  register: memcg
+
+- fail:
+    msg: Memory cgroups must be enabled
+  when: not memcg.stat.exists
+
 - name: Install ssh key
   authorized_key:
     key: "{{ lookup('file', k3s_ssh_key) }}"
-    user: kube
+    user: pi
     state: present
 
 - name: Setup passwordless sudo
   lineinfile:
     path: /etc/sudoers
-    regexp: '^%sudo'
-    line: '%sudo   ALL=(ALL:ALL) NOPASSWD:ALL'
+    regexp: '^%wheel'
+    line: '%wheel   ALL=(ALL:ALL) NOPASSWD:ALL'
     state: present
 
 - name: Limit sshd password and root login
@@ -32,15 +41,19 @@
   notify:
     - Restart sshd
 
-- name: Install chrony
-  package:
-    name: chrony
-    state: present
+- name: Disable selinux
+  selinux:
+    state: disabled
 
-- name: Start chrony
-  service:
-    name: chronyd
-    state: started
+# - name: Install chrony
+#   package:
+#     name: chrony
+#     state: present
+
+# - name: Start chrony
+#   service:
+#     name: chronyd
+#     state: started
 
 - name: Fetch K3S checksum
   get_url:

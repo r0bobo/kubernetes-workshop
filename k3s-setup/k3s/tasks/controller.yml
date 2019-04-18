@@ -11,12 +11,13 @@
   systemd:
     name: k3s-controller
     daemon_reload: true
+    enabled: true
     state: started
 
 - name: Wait for controller to create cluster token
   wait_for:
     path: /var/lib/rancher/k3s/server/node-token
-    timeout: 60
+    timeout: 300
 
 - name: Read node token
   slurp:

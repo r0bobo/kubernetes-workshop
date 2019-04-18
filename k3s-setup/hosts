@@ -1,17 +1,16 @@
 # -*- mode: conf-unix -*-
 
 [all:vars]
-ansible_user=kube
+ansible_user=pi
 ansible_ssh_private_key_file=k3s.ed25519
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_python_interpreter=/usr/bin/python3
 
 [controller]
-k3s-controller.lan
+fedpi-controller.lan
 
 [controller:vars]
 k3s_controller=true
 
 [worker]
-k3s-worker-1.lan
-k3s-worker-2.lan
-k3s-worker-3.lan
+fedpi-worker-1.lan

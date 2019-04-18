@@ -7,9 +7,9 @@ After=network.target
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 {% if k3s_controller %}
-ExecStart=/usr/local/bin/k3s server --disable-agent
+ExecStart=/usr/local/bin/k3s server --disable-agent --no-deploy=servicelb
 {% else %}
-ExecStart=/usr/local/bin/k3s agent --server {{ k3s_server_addr }} --token-file /etc/k3s/cluster-token
+ExecStart=/usr/local/bin/k3s agent --server={{ k3s_server_addr }} --token-file=/etc/k3s/cluster-token
 {% endif %}
 KillMode=process
 Delegate=yes
