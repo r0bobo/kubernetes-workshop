@@ -1,0 +1,12 @@
+---
+- name: Configure iSCSI server
+  template:
+    src: iscsi.conf.j2
+    dest: /etc/tgt/conf.d/k8s.conf
+  notify:
+    - Restart targetd
+
+- name: Start targetd
+  systemd:
+    name: tgt
+    state: started

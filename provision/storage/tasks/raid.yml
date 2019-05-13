@@ -62,3 +62,16 @@
     opts: nofail
     boot: true
     state: present
+
+- name: Create LVM volume group
+  lvg:
+    vg: vg-iscsi
+    pvs: /dev/md0p2
+    state: present
+
+- name: Create LVM thin pool
+  lvol:
+    vg: vg-iscsi
+    thinpool: pool-iscsi
+    size: 40G
+    state: present

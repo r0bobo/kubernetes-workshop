@@ -2,13 +2,16 @@
 - name: Install storage packages
   apt:
     name:
+      - lvm2
       - mdadm
       - nfs-kernel-server
       - portmap
+      - tgt
 
 - include_tasks: "{{ task }}"
   loop:
     - raid.yml
     - nfs.yml
+    - iscsi.yml
   loop_control:
     loop_var: task
