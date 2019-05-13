@@ -1,0 +1,20 @@
+- hosts: all
+  become: true
+  tasks:
+    - service:
+        name: k3s-controller
+        state: stopped
+        enabled: false
+      when: k3s_controller is defined and k3s_controller
+    - service:
+        name: k3s-worker
+        state: stopped
+        enabled: false
+      when: k3s_controller is not defined and not k3s_controller
+    - reboot: {}
+    - file:
+        state: absent
+        path: "{{ item }}"
+      loop:
+        - /var/lib/rancher
+        - /usr/local/bin/k3s
