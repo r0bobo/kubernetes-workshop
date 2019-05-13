@@ -1,0 +1,3 @@
+[submodule "containers/iscsi-provisioner/external-storage"]
+	path = containers/iscsi-provisioner/external-storage
+	url = https://github.com/kubernetes-incubator/external-storage
