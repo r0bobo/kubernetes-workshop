@@ -16,3 +16,4 @@
   file:
     path: "{{ storage_k8s_pv_dir }}"
     state: directory
+    mode: 0777
