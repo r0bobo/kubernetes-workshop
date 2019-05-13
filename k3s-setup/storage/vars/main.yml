@@ -1,0 +1,6 @@
+---
+storage_devices: "{{ ansible_devices | map('regex_search', 'sd.*') | select('string') | map('regex_replace', '^(.*)$', '/dev/\\1') | list }}" 
+storage_partitions: >-
+  {% for dev in storage_devices %}
+  {{ dev }}1
+  {% endfor %}

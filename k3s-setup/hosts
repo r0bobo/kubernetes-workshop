@@ -7,10 +7,15 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 ansible_python_interpreter=/usr/bin/python3
 
 [controller]
-fedpi-controller.lan
+pi-controller.lan
 
 [controller:vars]
 k3s_controller=true
 
 [worker]
-fedpi-worker-1.lan
+pi-worker1.lan
+pi-worker2.lan
+pi-worker3.lan
+
+[storage]
+pi-controller.lan

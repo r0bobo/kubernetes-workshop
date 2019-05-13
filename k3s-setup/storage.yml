@@ -1,0 +1,7 @@
+---
+- hosts: storage
+  become: true
+  # vars:
+  #   storage_start_clean: true
+  roles:
+    - storage

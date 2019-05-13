@@ -1,0 +1,64 @@
+---
+- name: Setup partition on storage devices
+  parted:
+    device: "{{ item }}"
+    number: 1
+    state: present
+  loop: "{{ storage_devices }}"
+
+- name: Get RAID status
+  command: mdadm --detail /dev/md0
+  register: raid_status
+  changed_when: false
+  failed_when: false
+
+- name: Stop current RAID array
+  command: >-
+    mdadm --stop /dev/md0
+  when: raid_status.rc == 0 and storage_start_clean
+
+- name: Zap current RAID array
+  command: >-
+    mdadm --zero-superblock {{ storage_partitions }}
+  when: raid_status.rc != 0 or storage_start_clean
+
+- name: Setup RAID array
+  shell: >-
+    yes | mdadm --create /dev/md0 --level=0
+    --raid-devices={{ storage_devices | length }}
+    {{ storage_partitions }}
+  when: raid_status.rc != 0 or storage_start_clean
+
+- name: Setup partitions on RAID devices
+  parted:
+    device: /dev/md0
+    number: "{{ item.number }}"
+    part_start: "{{ item.start }}"
+    part_end: "{{ item.end }}"
+    state: present
+  loop:
+    - number: 1
+      start: '0%'
+      end: '50%'
+    - number: 2
+      start: '50%'
+      end: '100%'
+
+- name: Format first RAID partition
+  filesystem:
+    dev: /dev/md0p1
+    fstype: ext4
+
+- name: Setup mount dir
+  file:
+    path: "{{ storage_nfs_dir }}"
+    state: directory
+
+- name: Mount first RAID partition
+  mount:
+    path: "{{ storage_nfs_dir }}"
+    src: /dev/md0p1
+    fstype: ext4
+    opts: nofail
+    boot: true
+    state: present

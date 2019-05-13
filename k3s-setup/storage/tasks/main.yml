@@ -1,0 +1,14 @@
+---
+- name: Install storage packages
+  apt:
+    name:
+      - mdadm
+      - nfs-kernel-server
+      - portmap
+
+- include_tasks: "{{ task }}"
+  loop:
+    - raid.yml
+    - nfs.yml
+  loop_control:
+    loop_var: task

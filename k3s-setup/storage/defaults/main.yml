@@ -1,0 +1,9 @@
+---
+storage_start_clean: false
+storage_nfs_dir: /var/vol/nfs
+storage_k8s_pv_dir: /var/vol/nfs/k8s/pv
+
+# k3s_iscsi_lv_pool: /dev/mapper/vg--iscsi-pool
+# k3s_iscsi_target: iqn.2019-05.se.layer10:server.target1
+# k3s_iscsi_user: k8s
+# k3s_iscsi_password: layer10
