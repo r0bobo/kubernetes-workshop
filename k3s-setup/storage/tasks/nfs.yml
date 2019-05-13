@@ -1,0 +1,18 @@
+---
+- name: Configure NFS exports
+  template:
+    src: exports.j2
+    dest: /etc/exports
+  notify:
+    - Export NFS shares
+
+- name: Start NFS server
+  service:
+    name: nfs-server
+    state: started
+    enabled: true
+
+- name: Setup k8s pv dir
+  file:
+    path: "{{ storage_k8s_pv_dir }}"
+    state: directory
