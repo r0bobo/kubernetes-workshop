@@ -1,0 +1,15 @@
+---
+- name: Check that there is only one controller
+  fail:
+    msg: Only deployments with one controller node are supported
+  when: groups['controller'] | length > 1
+  run_once: true
+
+- name: Check if memory cgroups are enabled
+  stat:
+    path: /sys/fs/cgroup/memory
+  register: memcg
+
+- fail:
+    msg: Memory cgroups must be enabled
+  when: not memcg.stat.exists

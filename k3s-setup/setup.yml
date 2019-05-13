@@ -1,6 +1,6 @@
 - hosts: all
   become: true
   vars:
-    k3s_version: 0.4.0
+    k3s_version: 0.5.0
   roles:
     - k3s

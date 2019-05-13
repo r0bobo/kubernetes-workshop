@@ -1,0 +1,18 @@
+---
+- name: Fetch K3S checksum
+  get_url:
+    url: "{{ k3s_sha_url }}"
+    dest: /tmp/k3s-checksum
+    force: true
+
+- name: Read K3S checksum
+  command: awk '/k3s-{{ k3s_arch }}/ { print $1 }' /tmp/k3s-checksum
+  register: k3s_checksum
+  changed_when: false
+
+- name: Download K3S
+  get_url:
+    url: "{{ k3s_bin_url }}"
+    dest: /usr/local/bin/k3s
+    mode: 0755
+    checksum: sha256:{{ k3s_checksum.stdout }}

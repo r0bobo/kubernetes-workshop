@@ -1,0 +1,36 @@
+---
+- name: Install ssh key
+  authorized_key:
+    key: "{{ lookup('file', k3s_ssh_key) }}"
+    user: pi
+    state: present
+
+- name: Setup passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^%wheel'
+    line: '%wheel   ALL=(ALL:ALL) NOPASSWD:ALL'
+    state: present
+
+- name: Limit sshd password and root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  loop:
+    - regexp: '^PermitRootLogin'
+      line: 'PermitRootLogin no'
+    - regexp: '^PasswordAuthentication'
+      line: 'PasswordAuthentication no'
+  notify:
+    - Restart sshd
+
+# - name: Disable unneeded services
+#   service:
+#     name: "{{ item }}"
+#     state: stopped
+#     enabled: false
+#   loop:
+#     - firewalld
+#     - zram-swap

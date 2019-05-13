@@ -31,4 +31,3 @@
 - fail:
     msg: Could not start worker
   when: worker_svc.status.ActiveState != 'active'
-
