@@ -1,0 +1,45 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 500Mi
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: testapp
+  labels:
+    app: testapp
+spec:
+  volumes:
+    - name: testapp
+      persistentVolumeClaim:
+       claimName: testapp
+  containers:
+    - name: testapp
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: testapp
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: testapp
+spec:
+  selector:
+    app: testapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
