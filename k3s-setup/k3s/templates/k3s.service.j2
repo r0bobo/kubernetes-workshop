@@ -9,7 +9,7 @@ ExecStartPre=-/sbin/modprobe overlay
 {% if k3s_controller %}
 ExecStart=/usr/local/bin/k3s server --no-deploy=servicelb
 {% else %}
-ExecStart=/usr/local/bin/k3s agent --server={{ k3s_server_addr }} --token-file=/etc/k3s/cluster-token --kubelet-arg="{{ k3s_kubelet_flags }}"
+ExecStart=/usr/local/bin/k3s agent --server={{ k3s_server_addr }} --token-file=/etc/k3s/cluster-token {{ k3s_kubelet_flags }}
 {% endif %}
 KillMode=process
 Delegate=yes
