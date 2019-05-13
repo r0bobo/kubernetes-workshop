@@ -26,11 +26,8 @@
   notify:
     - Restart sshd
 
-# - name: Disable unneeded services
-#   service:
-#     name: "{{ item }}"
-#     state: stopped
-#     enabled: false
-#   loop:
-#     - firewalld
-#     - zram-swap
+- name: Install required packages
+  package:
+    name:
+      - open-iscsi
+    state: present
