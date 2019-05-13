@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  handlers:
+    - name: Reboot OS
+      reboot:
+  tasks:
+    - name: Upgrade packages
+      apt:
+        update_cache: true
+        name: '*'
+        state: latest
+      notify:
+        - Reboot OS
