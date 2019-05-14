@@ -1,12 +1,42 @@
 ---
-- name: Configure iSCSI server
-  template:
-    src: iscsi.conf.j2
-    dest: /etc/tgt/conf.d/k8s.conf
+- name: Install iSCSI packages
+  apt:
+    name:
+      - python-yaml
+      - python-lvm2
+      - python-setproctitle
+      - python-rtslib-fb
+      - targetcli-fb
+    state: present
+
+- name: Fetch targetd
+  git:
+    repo: https://github.com/open-iscsi/targetd
+    dest: /opt/targetd
+    version: v0.8.8
   notify:
     - Restart targetd
 
-- name: Start targetd
+- name: Install targetd service
+  copy:
+    src: targetd.service
+    dest: /etc/systemd/system/targetd.service
+  notify:
+    - Reload systemd daemon
+    - Restart targetd
+
+- name: Configure iSCSI server
+  template:
+    src: iscsi.conf.j2
+    dest: /etc/rtslib-fb-target/targetd.yaml
+    mode: 0600
+  notify:
+    - Restart targetd
+
+- name: Start iSCSI services
   systemd:
-    name: tgt
+    name: "{{ item }}"
     state: started
+  loop:
+    - rtslib-fb-targetctl
+    - targetd

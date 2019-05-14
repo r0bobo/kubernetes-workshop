@@ -1,8 +1,16 @@
 ---
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: true
+
 - name: Export NFS shares
   command: exportfs -rav
 
 - name: Restart targetd
   systemd:
-    name: tgt
+    name: targetd
     state: restarted
+
+- name: Update APT cache
+  apt:
+    update_cache: true

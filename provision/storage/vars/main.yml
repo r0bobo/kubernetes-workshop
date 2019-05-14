@@ -5,4 +5,4 @@ storage_partitions: >-
   {{ dev }}1
   {% endfor %}
 
-storage_iscsi_lv_pool: /dev/mapper/vg--iscsi-pool--iscsi
+storage_iscsi_lv_pool: vg-iscsi/pool-iscsi

@@ -1,12 +1,20 @@
 ---
-- name: Install storage packages
-  apt:
-    name:
-      - lvm2
-      - mdadm
-      - nfs-kernel-server
-      - portmap
-      - tgt
+- name: Setup apt repos
+  apt_repository:
+    repo: deb http://raspbian.raspberrypi.org/raspbian/ testing main contrib non-free rpi
+    state: present
+  notify:
+    - Update APT cache
+
+- name: Setup default apt repo
+  copy:
+    dest: /etc/apt/apt.conf.d/90defaultrepo
+    content: |-
+      APT::Default-Release "stable";
+  notify:
+    - Update APT cache
+
+- meta: flush_handlers
 
 - include_tasks: "{{ task }}"
   loop:

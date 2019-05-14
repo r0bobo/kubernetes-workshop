@@ -1,4 +1,13 @@
 ---
+- name: Install RAID packages
+  apt:
+    name:
+      - lvm2
+      - mdadm
+      - portmap
+      - thin-provisioning-tools
+    state: present
+
 - name: Setup partition on storage devices
   parted:
     device: "{{ item }}"

@@ -1,0 +1,11 @@
+[Unit]
+Description=targetd storage array API daemon
+Requires=rtslib-fb-targetctl.service
+After=rtslib-fb-targetctl.service
+
+[Service]
+Environment="PYTHONPATH=/opt/targetd"
+ExecStart=/opt/targetd/scripts/targetd
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+password: {{ storage_iscsi_password }}
+
+# defaults below; uncomment and edit
+# if using a thin pool, use <volume group name>/<thin pool name>
+# e.g vg-targetd/pool
+pool_name: {{ storage_iscsi_lv_pool }}
+user: {{ storage_iscsi_user }}
+ssl: false
+target_name: {{ storage_iscsi_target }}
