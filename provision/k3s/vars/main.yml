@@ -1,15 +1,3 @@
 ---
 k3s_sha_url: "{{ k3s_base_url }}/v{{ k3s_version }}/{{ k3s_sha_file }}"
 k3s_bin_url: "{{ k3s_base_url }}/v{{ k3s_version }}/{{ k3s_bin_file }}"
-
-k3s_kubelet_args:
-  address: 0.0.0.0
-  # pod-infra-container-image: gcr.io/google-containers/pause-arm64@sha256:f365626a556e58189fc21d099fc64603db0f440bff07f77c740989515c544a39
-  # volume-plugin-dir: /etc/origin/kubelet-plugins/
-
-k3s_kubelet_flags: >-
-  {%- for key, val in k3s_kubelet_args.items() -%}
-  {%- if val %}
-  --kubelet-arg '{{ key }}={{ val }}'
-  {%- endif -%}
-  {%- endfor -%}
