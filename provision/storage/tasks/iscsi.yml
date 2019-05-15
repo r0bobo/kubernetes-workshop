@@ -27,7 +27,7 @@
 
 - name: Configure iSCSI server
   template:
-    src: iscsi.conf.j2
+    src: targetd.yaml.j2
     dest: /etc/rtslib-fb-target/targetd.yaml
     mode: 0600
   notify:
@@ -37,6 +37,7 @@
   systemd:
     name: "{{ item }}"
     state: started
+    enabled: true
   loop:
     - rtslib-fb-targetctl
     - targetd
